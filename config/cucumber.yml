@@ -1,0 +1,2 @@
+default: -t 'not @in_progress' -t 'not @manual' -t 'not @bug' DRIVER='chrome' --format pretty --format html --out reports/report.html
+
