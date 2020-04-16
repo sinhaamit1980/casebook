@@ -9,10 +9,15 @@ Feature: Adding and Searching Client
     When I add new client with valid details
     Then I can see a success message
 
+  @dependant_test
   Scenario: Adding a new client by selecting address
     When I add new client with valid details by selecting address
     Then I can see a success message
 
+  @dependant_test
+  Scenario: searching for a client added in previous test
+    When I search for a client added in previous test
+    Then I can see the client detail from previous test
 
   Scenario: Search for the new client added
     And I have created a new client
