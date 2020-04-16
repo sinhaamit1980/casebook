@@ -1,0 +1,31 @@
+require 'rubygems'
+require 'cucumber'
+require 'cucumber/rake/task'
+require 'pry'
+require 'capybara'
+require 'colorize'
+
+File.truncate('rerun.txt', 0) if File.exist?('rerun.txt')
+
+Cucumber::Rake::Task.new(:features) do |t|
+  @start_time = Time.now
+  t.cucumber_opts = "--format pretty -f rerun -o rerun.txt DRIVER=#{(ENV['DRIVER']) ? ENV['DRIVER'] : 'chrome'}"
+  t.cucumber_opts << " #{ENV['OPTS']}" unless ENV['OPTS'].nil?
+end
+
+desc 're run failing test'
+Cucumber::Rake::Task.new :failing_tests, 'Re-run failing tests from the rerun.txt file' do |t|
+  t.cucumber_opts = "@rerun.txt -f html -o #{'reports/rerun_output_' + Time.now.strftime('%I_%M_%S_%L') + '.html'} -f pretty DRIVER=#{(ENV['DRIVER']) ? ENV['DRIVER'] : 'chrome'}"
+end
+
+at_exit do
+  puts "\n**** RE RUNNING FAILING TESTS ****\n\n" unless File.read('rerun.txt').empty?
+  system("cucumber @rerun.txt -f pretty") unless File.read('rerun.txt').empty?
+  exit_code = @exit_code.nil? ? $?.exitstatus : @exit_code
+  colour = exit_code == 0 ? 'green' : 'red'
+  puts "## Suite took #{(Time.now - @start_time) / 60}"
+  puts "\n#################################".send(colour)
+  puts "## Exiting with status code: #{exit_code} ##".send(colour)
+  puts "#################################\n\n".send(colour)
+  exit exit_code
+end

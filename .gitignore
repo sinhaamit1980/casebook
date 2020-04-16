@@ -1,0 +1,8 @@
+# ignore test reports folder
+reports/*.html
+
+#ignore screenshots
+screenshots/*.png
+
+#ignore rerun.txt
+rerun.txt
